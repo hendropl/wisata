@@ -1,12 +1,14 @@
 {
   "expo": {
-    "name": "ocean",
-    "slug": "ocean",
+    "name": "wisata",
+    "slug": "wisata",
+    "entryPoint": "./app/screens/index.tsx",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
+    "platforms": ["ios", "android", "web"],
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true

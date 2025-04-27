@@ -8,10 +8,11 @@
       ]
     }
   },
+  
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+, "app/login.tsx", "app/screens/HomeScreen.tsx", "app/map.tsx", "app/index.jsx"  ]
 }
