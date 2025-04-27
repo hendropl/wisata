@@ -1,21 +1,14 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, Linking } from 'react-native'; // <--- tambahkan Linking di sini
-import { useNavigation, useRoute } from '@react-navigation/native';
-import type { RouteProp } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '.'; // Pastikan path sesuai
-
-type DetailScreenRouteProp = RouteProp<RootStackParamList, 'Detail'>;
-type DetailScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Detail'>;
+import { View, Text, Image, TouchableOpacity, ScrollView, Linking } from 'react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
 const DetailScreen: React.FC = () => {
-  const navigation = useNavigation<DetailScreenNavigationProp>();
-  const route = useRoute<DetailScreenRouteProp>();
-  const { destination } = route.params;
+  const router = useRouter();
+  const { title, rating, image } = useLocalSearchParams();
 
   // Function buat buka Google Maps
   const openGoogleMaps = () => {
-    const mapsUrl = 'https://www.bing.com/maps?q=Tirta+Gangga&satid=id.sid%3A8dc5fab5-ae93-a8c0-3baf-e5723b07f440&FORM=KC2MAP&cp=-8.411944%7E115.586901&lvl=16.0'; // Link langsung ke Tirta Gangga
+    const mapsUrl = 'https://www.bing.com/maps?q=Tirta+Gangga&satid=id.sid%3A8dc5fab5-ae93-a8c0-3baf-e5723b07f440&FORM=KC2MAP&cp=-8.411944%7E115.586901&lvl=16.0';
     Linking.openURL(mapsUrl);
   };
 
@@ -23,16 +16,16 @@ const DetailScreen: React.FC = () => {
     <ScrollView style={{ flex: 1, backgroundColor: '#e9e6dc' }}>
       {/* Header */}
       <View style={{ backgroundColor: '#68755C', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 15 }}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => router.back()}>
           <Text style={{ color: '#fff', fontSize: 24 }}>{'←'}</Text>
         </TouchableOpacity>
 
         {/* Judul dan Rating */}
         <View style={{ marginLeft: 25 }}>
-          <Text style={{ color: '#fff', fontSize: 35, fontWeight: 'bold' }}>{destination.title}</Text>
+          <Text style={{ color: '#fff', fontSize: 35, fontWeight: 'bold' }}>{title}</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
             <Text style={{ color: '#fff', fontSize: 30 }}>⭐</Text>
-            <Text style={{ color: '#fff', fontSize: 30, marginLeft: 4 }}>{destination.rating}</Text>
+            <Text style={{ color: '#fff', fontSize: 30, marginLeft: 4 }}>{rating}</Text>
           </View>
         </View>
       </View>
@@ -66,15 +59,25 @@ const DetailScreen: React.FC = () => {
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 50 }}>
             <TouchableOpacity
               style={{ backgroundColor: '#404534', paddingHorizontal: 20, paddingVertical: 12, borderRadius: 30 }}
-              onPress={openGoogleMaps} // <- ini trigger ke maps
+              onPress={openGoogleMaps}
             >
               <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 14 }}>View Maps</Text>
             </TouchableOpacity>
+
             <TouchableOpacity
-                style={{ backgroundColor: '#404534', paddingHorizontal: 20, paddingVertical: 12, borderRadius: 30 }}
-                onPress={() => navigation.navigate('Checkout', { destination })} // <-- ini update pentingnya
-                >
-                <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 14 }}>Order Ticket</Text>
+              style={{ backgroundColor: '#404534', paddingHorizontal: 20, paddingVertical: 12, borderRadius: 30 }}
+              onPress={() => {
+                router.push({
+                  pathname: '/checkout',
+                  params: {
+                    title: title as string,
+                    rating: rating as string,
+                    image: image as string
+                  }
+                });
+              }}
+            >
+              <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 14 }}>Order Ticket</Text>
             </TouchableOpacity>
 
           </View>
@@ -84,7 +87,7 @@ const DetailScreen: React.FC = () => {
         <View style={{ flex: 1 }}>
           {/* Main Image */}
           <Image
-            source={destination.image}
+            source={{ uri: image as string }}
             style={{ width: '100%', height: 300, borderRadius: 10 }}
             resizeMode="cover"
           />
@@ -94,7 +97,7 @@ const DetailScreen: React.FC = () => {
             {[0, 1, 2].map((_, index) => (
               <Image
                 key={index}
-                source={destination.image}
+                source={{ uri: image as string }}
                 style={{ width: '30%', height: 80, borderRadius: 8 }}
                 resizeMode="cover"
               />
@@ -106,4 +109,5 @@ const DetailScreen: React.FC = () => {
     </ScrollView>
   );
 }
+
 export default DetailScreen;
