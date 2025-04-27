@@ -1,17 +1,11 @@
 import React from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import Icon from 'react-native-vector-icons/Feather';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import type { RouteProp } from '@react-navigation/native';
-import type { RootStackParamList } from '.'; // Pastikan path ini sesuai
-
-type CheckoutScreenRouteProp = RouteProp<RootStackParamList, 'Checkout'>;
-type CheckoutScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Checkout'>;
 
 export default function CheckoutScreen() {
-  const navigation = useNavigation<CheckoutScreenNavigationProp>();
-  const route = useRoute<CheckoutScreenRouteProp>();
-  const { destination } = route.params; // Ambil destination dari params
+  const router = useRouter();
+  const { title, rating, image } = useLocalSearchParams();
 
   const facilities = [
     'Mata Air Alami',
@@ -27,7 +21,7 @@ export default function CheckoutScreen() {
       
       {/* Navbar */}
       <View style={styles.navbar}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Icon name="arrow-left" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.navTitle}>Checkout</Text>
@@ -37,10 +31,10 @@ export default function CheckoutScreen() {
       <View style={styles.card}>
         {/* Title & Info */}
         <View style={styles.header}>
-          <Text style={styles.title}>{destination.title}</Text>
+          <Text style={styles.title}>{title}</Text>
           <View style={styles.infoRow}>
             <Icon name="star" size={18} color="#79846e" />
-            <Text style={styles.infoText}>{destination.rating}</Text>
+            <Text style={styles.infoText}>{rating}</Text>
             <Icon name="dollar-sign" size={18} color="#79846e" style={{ marginLeft: 12 }} />
             <Text style={styles.infoText}>25.000</Text>
           </View>
@@ -49,7 +43,7 @@ export default function CheckoutScreen() {
         {/* Main Content */}
         <View style={styles.mainContent}>
           <Image
-            source={destination.image}
+            source={{ uri: image as string }} // Pastikan 'image' param adalah URL
             style={styles.mainImage}
             resizeMode="cover"
           />
@@ -68,7 +62,7 @@ export default function CheckoutScreen() {
           {[0, 1, 2].map((_, index) => (
             <Image
               key={index}
-              source={destination.image}
+              source={{ uri: image as string }}
               style={styles.thumbnail}
               resizeMode="cover"
             />
@@ -84,6 +78,7 @@ export default function CheckoutScreen() {
     </ScrollView>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
