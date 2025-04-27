@@ -1,12 +1,26 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, Linking } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useDestination } from './context/destination-context'; // Pastikan path ini sesuai
 
 const DetailScreen: React.FC = () => {
   const router = useRouter();
-  const { title, rating, image } = useLocalSearchParams();
+  const { id } = useLocalSearchParams(); // Hanya ambil ID
+  const { destinations } = useDestination();
 
-  // Function buat buka Google Maps
+  // Cari destinasi berdasarkan id
+  const destination = destinations.find(dest => dest.id === id);
+
+  if (!destination) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Destination not found</Text>
+      </View>
+    );
+  }
+
+  const { title, rating, image } = destination; // Ambil data dari destination langsung
+
   const openGoogleMaps = () => {
     const mapsUrl = 'https://www.bing.com/maps?q=Tirta+Gangga&satid=id.sid%3A8dc5fab5-ae93-a8c0-3baf-e5723b07f440&FORM=KC2MAP&cp=-8.411944%7E115.586901&lvl=16.0';
     Linking.openURL(mapsUrl);
@@ -70,9 +84,9 @@ const DetailScreen: React.FC = () => {
                 router.push({
                   pathname: '/checkout',
                   params: {
-                    title: title as string,
-                    rating: rating as string,
-                    image: image as string
+                    title,
+                    rating,
+                    image: image ?? ''
                   }
                 });
               }}
@@ -83,11 +97,11 @@ const DetailScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Image Section */}
-        <View style={{ flex: 1 }}>
+         {/* Image Section */}
+         <View style={{ flex: 1 }}>
           {/* Main Image */}
           <Image
-            source={{ uri: image as string }}
+            source={{ uri: image ?? '' }}
             style={{ width: '100%', height: 300, borderRadius: 10 }}
             resizeMode="cover"
           />
@@ -97,7 +111,7 @@ const DetailScreen: React.FC = () => {
             {[0, 1, 2].map((_, index) => (
               <Image
                 key={index}
-                source={{ uri: image as string }}
+                source={{ uri: image ?? '' }}
                 style={{ width: '30%', height: 80, borderRadius: 8 }}
                 resizeMode="cover"
               />
